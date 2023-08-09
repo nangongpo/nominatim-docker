@@ -35,25 +35,25 @@ cd ${PROJECT_DIR} && sudo -E -u nominatim nominatim refresh --website --function
 service apache2 start
 
 # start continous replication process
-if [ "$REPLICATION_URL" != "" ] && [ "$FREEZE" != "true" ]; then
-  # run init in case replication settings changed
-  sudo -E -u nominatim nominatim replication --project-dir ${PROJECT_DIR} --init
-  if [ "$UPDATE_MODE" == "continuous" ]; then
-    echo "starting continuous replication"
-    sudo -E -u nominatim nominatim replication --project-dir ${PROJECT_DIR} &> /var/log/replication.log &
-    replicationpid=${!}
-  elif [ "$UPDATE_MODE" == "once" ]; then
-    echo "starting replication once"
-    sudo -E -u nominatim nominatim replication --project-dir ${PROJECT_DIR} --once &> /var/log/replication.log &
-    replicationpid=${!}
-  elif [ "$UPDATE_MODE" == "catch-up" ]; then
-    echo "starting replication once in catch-up mode"
-    sudo -E -u nominatim nominatim replication --project-dir ${PROJECT_DIR} --catch-up &> /var/log/replication.log &
-    replicationpid=${!}
-  else
-    echo "skipping replication"
-  fi
-fi
+# if [ "$REPLICATION_URL" != "" ] && [ "$FREEZE" != "true" ]; then
+#   # run init in case replication settings changed
+#   sudo -E -u nominatim nominatim replication --project-dir ${PROJECT_DIR} --init
+#   if [ "$UPDATE_MODE" == "continuous" ]; then
+#     echo "starting continuous replication"
+#     sudo -E -u nominatim nominatim replication --project-dir ${PROJECT_DIR} &> /var/log/replication.log &
+#     replicationpid=${!}
+#   elif [ "$UPDATE_MODE" == "once" ]; then
+#     echo "starting replication once"
+#     sudo -E -u nominatim nominatim replication --project-dir ${PROJECT_DIR} --once &> /var/log/replication.log &
+#     replicationpid=${!}
+#   elif [ "$UPDATE_MODE" == "catch-up" ]; then
+#     echo "starting replication once in catch-up mode"
+#     sudo -E -u nominatim nominatim replication --project-dir ${PROJECT_DIR} --catch-up &> /var/log/replication.log &
+#     replicationpid=${!}
+#   else
+#     echo "skipping replication"
+#   fi
+# fi
 
 # fork a process and wait for it
 tail -Fv /var/log/postgresql/postgresql-14-main.log /var/log/apache2/access.log /var/log/apache2/error.log /var/log/replication.log &
